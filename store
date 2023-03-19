@@ -1,0 +1,7 @@
+app.post("/user?location", (req, res) => {
+  console.log("Things be working just fine");
+});
+
+app.post("/user?available", (req, res) => {
+  console.log("Things be working just fine");
+});

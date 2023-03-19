@@ -1,34 +1,54 @@
 import User from "./models/User.js";
 import express from "express";
 import mongoose from "mongoose";
-mongoose.connect(
-  "mongodb+srv://joeljohn:joeljohn1234@cluster0.qpazsri.mongodb.net/?retryWrites=true&w=majority"
-);
+import session from "express-session";
+import MongoDBStoreCreator from "connect-mongodb-session";
+const MongoDBStore = MongoDBStoreCreator(session);
+import passport from "passport";
+import passportLocal from "passport-local";
+import isLoggedIn from "./isLoggedIn.js";
+import cors from "cors";
+
+import * as dotenv from "dotenv";
+dotenv.config();
+
+import AuthRoute from "./routes/AuthRoute.js";
+import UserRoute from "./routes/UserRoute.js";
+
+await mongoose.connect(process.env.CONNECTION_URL);
+
 const app = express();
-//body-parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//routes
-app.get("/user", (req, res) => {
-  console.log("Things be working just fine");
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+const store = new MongoDBStore({
+  uri: process.env.CONNECTION_URL,
+  collection: process.env.SESSION_STORE,
 });
-app.post("/user", async (req, res) => {
-  const newUser = new User({
-    username: req.body.username,
-    roomNumber: req.body.roomNumber,
-  });
-  await newUser.save();
-  res.send("User Created");
-});
-app.get("/user/id", (req, res) => {
-  console.log("Things be working just fine");
-});
-app.post("/user?location", (req, res) => {
-  console.log("Things be working just fine");
-});
-app.post("/user?available", (req, res) => {
-  console.log("Things be working just fine");
-});
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+import passportConfig from "./passportConfig.js";
+passportConfig(passport);
+
+app.use("/auth", AuthRoute);
+app.use("/user", isLoggedIn, UserRoute);
 
 app.listen("3000", () => {
   console.log("Sever started at 3000");
