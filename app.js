@@ -48,7 +48,7 @@ import passportConfig from "./passportConfig.js";
 passportConfig(passport);
 
 app.use("/auth", AuthRoute);
-app.use("/user", isLoggedIn, UserRoute);
+app.use("/user", UserRoute);
 
 app.listen("3000", () => {
   console.log("Sever started at 3000");
