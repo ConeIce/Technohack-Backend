@@ -18,4 +18,8 @@ router.post("/", (req, res) => {
   }
 });
 
+router.post("/iot", (req, res) => {
+  controller.postLocationIOT(req, res);
+});
+
 export default router;

@@ -6,6 +6,7 @@ const User = mongoose.Schema({
   roomNumber: { type: String, required: true },
   location: { type: String },
   available: { type: Boolean },
+  teacherId: { type: String },
 });
 
 export default mongoose.model("User", User);

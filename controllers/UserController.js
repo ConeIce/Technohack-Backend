@@ -15,6 +15,12 @@ export default {
     await user.save();
     res.send({ message: "location updated" });
   },
+  postLocationIOT: async (req, res) => {
+    const user = await User.findOne({ teacherId: req.body.teacherId });
+    user.location = req.body.location;
+    await user.save();
+    res.send({ message: "location updated" });
+  },
   postAvailable: async (req, res) => {
     const user = await User.findOne({ _id: req.user.id });
     user.available = req.query.available;
